@@ -11,9 +11,10 @@
     const { str, size } = S.fitName(item.name, { ...NAME, width: 46, max: 9 });
     const hasSub = !!item.sub;
     let g = `<rect width="${W}" height="${H}" fill="${PAPER}"/>`;
-    g += `<rect x="0.6" y="0.6" width="${W - 1.2}" height="${H - 1.2}" fill="none" stroke="${INK}" stroke-width="0.3"/>`;
+    // outer frame sits on the label edge: neighbours share one line, so you only cut along it
+    g += `<rect x="0" y="0" width="${W}" height="${H}" fill="none" stroke="${INK}" stroke-width="0.5"/>`;
     // inner frame: corner brackets that break around the ornaments
-    const i = 2.4, gap = 8, len = 4;
+    const i = 2.0, gap = 8, len = 4;
     g += `<path fill="none" stroke="${INK}" stroke-width="0.22" d="` +
       `M${i + len},${H - i} H${i} V${H - i - len} M${i},${i + len} V${i} H${cx - gap} M${cx + gap},${i} H${W - i} V${i + len} ` +
       `M${W - i},${H - i - len} V${H - i} H${cx + gap} M${cx - gap},${H - i} H${i + len}"/>`;
@@ -48,6 +49,21 @@
     return S.svg(L.D, L.D, g);
   }
 
+  // Ø30 mm full-circle lid: fleur-de-lis centred on top, name centred on the lower semicircle
+  function circle30(item) {
+    const l = S.lid30, c = l.C;
+    let g = l.base(PAPER);
+    g += l.ring(14.5, `stroke="${INK}" stroke-width="0.28"`);
+    g += l.ring(13.7, `stroke="${INK}" stroke-width="0.2"`);
+    g += S.fleur(c, c - 6.4, 5.6, INK);
+    g += `<circle cx="${c}" cy="${c - 2.6}" r="0.28" fill="${INK}"/><circle cx="${c}" cy="${c - 1.8}" r="0.22" fill="${INK}"/>`;
+    const rb = 10.6, str = item.name.toUpperCase();
+    const nm = { ...NAME, ls: 0.02 };
+    const size = S.fit.size(str, { ...nm, width: S.arcLen(rb, 0.84), max: 4.2 });
+    g += S.arcText(str, { ...nm, cx: c, cy: c, r: rb, size, fill: INK });
+    return S.svg(l.D, l.D, g);
+  }
+
   function box(cat, items) {
     const W = 70, H = 70, cx = 35;
     let g = `<rect width="${W}" height="${H}" fill="${PAPER}"/>`;
@@ -67,6 +83,6 @@
   S.designs.register({
     id: 'editorial', name: 'Klassisk',
     blurb: 'Editorial serif, thin double frame, one fleur.',
-    rect, circle, box,
+    rect, circle, circle30, box,
   });
 })(window.Spice);

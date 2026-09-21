@@ -9,10 +9,10 @@
   function rect(item) {
     const W = 60, H = 30, cx = 30;
     let g = `<rect width="${W}" height="${H}" fill="${PAPER}"/>`;
-    g += `<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" fill="none" stroke="${INK}" stroke-width="0.35"/>`;
-    g += `<path stroke="${INK}" stroke-width="0.22" d="M0.5,7.4 H${W - 0.5} M0.5,22.6 H${W - 0.5}"/>`;
+    g += `<rect x="0" y="0" width="${W}" height="${H}" fill="none" stroke="${INK}" stroke-width="0.6"/>`;
+    g += `<path stroke="${INK}" stroke-width="0.22" d="M0,7.4 H${W} M0,22.6 H${W}"/>`;
     // top section: number left, category right
-    g += `<rect x="0.5" y="0.5" width="1.6" height="6.9" fill="${ACCENT}"/>`;
+    g += `<rect x="0" y="0" width="2.1" height="7.4" fill="${ACCENT}"/>`;
     g += S.text(`NR. ${pad(item.no)}`, { ...M(500), x: 3.4, y: 5.1, size: 2.3, fill: INK, anchor: 'start' });
     if (item.cat) {
       const cat = `KATEGORI: ${item.cat.toUpperCase()}`;
@@ -72,6 +72,25 @@
     return S.svg(L.D, L.D, g);
   }
 
+  // Ø30 mm full-circle lid: number + rule on top, name on the lower arc, type in between
+  function circle30(item) {
+    const l = S.lid30, c = l.C;
+    let g = l.base(PAPER);
+    g += l.ring(14.5, `stroke="${INK}" stroke-width="0.3"`);
+    g += S.text(`NR. ${pad(item.no)}`, { ...M(500), x: c, y: c - 6.2, size: 2.3, fill: INK });
+    g += `<rect x="${c - 1.3}" y="${c - 4.6}" width="2.6" height="0.7" fill="${ACCENT}"/>`;
+    g += `<path stroke="${INK}" stroke-width="0.2" d="M${c - 13.6},${c - 1.4} H${c + 13.6}"/>`;
+    if (item.sub) {
+      const t = `TYPE: ${item.sub.toUpperCase()}`;
+      const s = S.fit.size(t, { ...M(400), width: 15, max: 2.1 });
+      g += S.text(t, { ...M(400), x: c, y: c + 3.3, size: s, fill: GREY });
+    }
+    const rb = 10.6, str = item.name.toUpperCase();
+    const size = S.fit.size(str, { ...M(700), width: S.arcLen(rb, 0.82), max: 3.8 });
+    g += S.arcText(str, { ...M(700), cx: c, cy: c, r: rb, size, fill: INK });
+    return S.svg(l.D, l.D, g);
+  }
+
   function box(cat, items) {
     const W = 70, H = 70, cx = 35;
     let g = `<rect width="${W}" height="${H}" fill="${PAPER}"/>`;
@@ -90,6 +109,6 @@
   S.designs.register({
     id: 'apotek', name: 'Apotek',
     blurb: 'Mono type, ruled sections, NR. / TYPE / KATEGORI fields.',
-    rect, circle, box,
+    rect, circle, circle30, box,
   });
 })(window.Spice);

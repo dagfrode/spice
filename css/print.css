@@ -11,7 +11,6 @@
 }
 
 .grid { position: absolute; display: grid; }
-.rects-grid { left: 15mm; top: 13mm; }   /* 3 x 60 mm wide, 9 x 30 mm tall, centred */
 .circs-grid { left: 21mm; top: 22mm; }   /* 6 x 28 mm wide, 9 x 28 mm tall */
 .boxes-grid { left: 32.5mm; top: 20mm; } /* 2 x 70 mm + 5 mm gap */
 
@@ -19,12 +18,13 @@
 .lbl svg { display: block; }
 
 /* Cut guides: hairlines that sit just outside each label so they never print into the artwork. */
-.cuts .rect::after, .cuts .boxl::after {
+.cuts .boxl::after {
   content: ''; position: absolute; pointer-events: none;
   border: .1mm solid #b5b5b5;
 }
-.cuts .rect::after { inset: 0; }                 /* shared edges: one line is the cut line for both neighbours */
-.lbl .guide { display: none; position: absolute; left: 50%; top: 50%; margin: -13.5mm 0 0 -13.5mm; pointer-events: none; }
+.marks { display: none; position: absolute; left: 0; top: 0; pointer-events: none; }
+.cuts .marks { display: block; }
+.lbl .guide { display: none; position: absolute; inset: 0; margin: auto; pointer-events: none; }
 .cuts .guide { display: block; }
 .cuts .boxl::after { inset: -.4mm; }
 

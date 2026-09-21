@@ -6,18 +6,35 @@ window.Spice = window.Spice || {};
   const defaults = () => ({
     design: 'editorial',
     cuts: true,   // hairline cut guides around each label
-    hole: true,   // 5 mm centre hole on the lid label
+    lidStyle: 'notch27', // 'notch27' = Ø27 mm with 1/4 cut-out | 'round30' = Ø30 mm full circle
+    hole: true,   // 5 mm centre hole on the lid label (Ø27 style only)
     notch: true,  // 1/4 cut-out (top right) on the lid label
-    jars: true,   // print jar + lid labels
+    jars: true,   // print jar labels
+    lids: true,   // print lid labels
     boxes: true,  // print box labels
     categories: S.defaultCategories(),
   });
+
+  // Give every category a permanent, unique number (older saved lists have none).
+  function ensureNumbers(cats) {
+    let max = cats.reduce((m, c) => Math.max(m, c.n || 0), 0);
+    cats.forEach((c) => {
+      if (!c.n) c.n = ++max;
+      if (c.print === false) { c.jar = false; c.lid = false; } // older combined flag
+      delete c.print;
+    });
+    return cats;
+  }
 
   function load() {
     const d = defaults();
     try {
       const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (saved && Array.isArray(saved.categories)) return Object.assign(d, saved);
+      if (saved && Array.isArray(saved.categories)) {
+        const st = Object.assign(d, saved);
+        ensureNumbers(st.categories);
+        return st;
+      }
     } catch (e) { /* private mode / corrupt data: fall back to defaults */ }
     return d;
   }
@@ -26,5 +43,5 @@ window.Spice = window.Spice || {};
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
   }
 
-  S.state = { load, save, defaults };
+  S.state = { load, save, defaults, nextCategoryNumber: (cats) => cats.reduce((m, c) => Math.max(m, c.n || 0), 0) + 1 };
 })(window.Spice);

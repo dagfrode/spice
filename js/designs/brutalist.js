@@ -44,6 +44,21 @@
     return S.svg(L.D, L.D, g);
   }
 
+  // Ø30 mm full-circle lid: the name as big as it goes in the lower half, variant tiny on top
+  function circle30(item) {
+    const l = S.lid30, c = l.C;
+    let g = l.base(PAPER);
+    const base = c + 10.2, top = c + 2.4;
+    const width = 2 * Math.sqrt(15 * 15 - 10.2 * 10.2) - 3;
+    g += slab(item.name.toUpperCase(), { x: c, y: base, width, cap: base - top, maxSy: 3, anchor: 'middle' });
+    if (item.sub) {
+      const sub = item.sub.toUpperCase();
+      const s = S.fit.size(sub, { ...TINY, width: 12, max: 2.4 });
+      g += S.text(sub, { ...TINY, x: c, y: c - 6.4, size: s, fill: INK });
+    }
+    return S.svg(l.D, l.D, g);
+  }
+
   function box(cat, items) {
     const W = 70, H = 70;
     let g = `<rect width="${W}" height="${H}" fill="${PAPER}"/>`;
@@ -58,6 +73,6 @@
   S.designs.register({
     id: 'brutalist', name: 'Brutalistisk',
     blurb: 'Huge compressed type pushed to the edge.',
-    rect, circle, box,
+    rect, circle, circle30, box,
   });
 })(window.Spice);

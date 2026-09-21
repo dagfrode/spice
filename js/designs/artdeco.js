@@ -18,8 +18,8 @@
     const W = 60, H = 30, cx = 30;
     const hasSub = !!item.sub;
     let g = `<rect width="${W}" height="${H}" fill="${PAPER}"/>`;
-    g += `<path fill="none" stroke="${INK}" stroke-width="0.4" d="${stepped(0.7, 0.7, W - 1.4, H - 1.4, 1.2)}"/>`;
-    g += `<path fill="none" stroke="${GOLD}" stroke-width="0.22" d="${stepped(2.4, 2.4, W - 4.8, H - 4.8, 0.9)}"/>`;
+    g += `<path fill="none" stroke="${INK}" stroke-width="0.4" d="${stepped(0.25, 0.25, W - 0.5, H - 0.5, 1.2)}"/>`;
+    g += `<path fill="none" stroke="${GOLD}" stroke-width="0.22" d="${stepped(2.0, 2.0, W - 4.0, H - 4.0, 0.9)}"/>`;
     g += flank(cx, 5.3, 9, 2.2, GOLD, 1.1);
     const { str, size } = S.fitName(item.name, { ...NAME, width: 42, max: 7.4 });
     g += S.text(str, { ...NAME, x: cx, y: (hasSub ? 14.6 : 16.2) + size * 0.35, size, fill: INK });
@@ -56,6 +56,24 @@
     return S.svg(L.D, L.D, g);
   }
 
+  // Ø30 mm full-circle lid: diamond ornament centred, gold terminals at 3 and 9 o'clock, name on the lower arc
+  function circle30(item) {
+    const l = S.lid30, c = l.C;
+    let g = l.base(PAPER);
+    g += l.ring(14.5, `stroke="${INK}" stroke-width="0.34"`);
+    g += l.ring(13.6, `stroke="${GOLD}" stroke-width="0.2"`);
+    g += diamond(c - 14.05, c, 0.8, GOLD) + diamond(c + 14.05, c, 0.8, GOLD);
+    g += flank(c, c - 5.4, 5, 2.2, GOLD, 1.5);
+    if (item.sub) {
+      const ss = S.fit.size(item.sub, { ...SUB, width: 15, max: 2.8 });
+      g += S.text(item.sub, { ...SUB, x: c, y: c + 2.8, size: ss, fill: BROWN });
+    }
+    const rb = 10.4, str = item.name.toUpperCase();
+    const size = S.fit.size(str, { ...NAME, width: S.arcLen(rb, 0.8), max: 4.4 });
+    g += S.arcText(str, { ...NAME, cx: c, cy: c, r: rb, size, fill: INK });
+    return S.svg(l.D, l.D, g);
+  }
+
   function box(cat, items) {
     const W = 70, H = 70, cx = 35;
     let g = `<rect width="${W}" height="${H}" fill="${PAPER}"/>`;
@@ -73,6 +91,6 @@
   S.designs.register({
     id: 'artdeco', name: 'Art Deco',
     blurb: 'Stepped corners, double frame, diamonds.',
-    rect, circle, box,
+    rect, circle, circle30, box,
   });
 })(window.Spice);

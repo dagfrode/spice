@@ -14,6 +14,8 @@ window.Spice = window.Spice || {};
   S.fonts = {
     bodoni: "'Bodoni Moda', 'Didot', 'Bodoni 72', serif",
     cormorant: "'Cormorant Garamond', 'Garamond', serif",
+    barlow: "'Barlow Condensed', 'Arial Narrow', 'Oswald', sans-serif",
+    cormorantSC: "'Cormorant SC', 'Cormorant Garamond', 'Garamond', serif",
     jost: "'Jost', 'Helvetica Neue', Arial, sans-serif",
     mono: "'IBM Plex Mono', 'Courier New', monospace",
     anton: "'Anton', 'Impact', 'Arial Narrow', sans-serif",
@@ -26,7 +28,7 @@ window.Spice = window.Spice || {};
     "400 20px 'IBM Plex Mono'", "500 20px 'IBM Plex Mono'", "700 20px 'IBM Plex Mono'",
     "400 20px 'Anton'", "400 20px 'Limelight'", "400 20px 'Bodoni Moda'",
     "500 20px 'Cormorant Garamond'", "600 20px 'Cormorant Garamond'", "italic 500 20px 'Cormorant Garamond'",
-    "500 20px 'Cinzel'", "700 20px 'Cinzel'",
+    "500 20px 'Cinzel'", "700 20px 'Cinzel'", "500 20px 'Cormorant SC'", "600 20px 'Cormorant SC'", "700 20px 'Barlow Condensed'",
   ];
 
   S.svg = (w, h, inner) =>
@@ -121,5 +123,29 @@ window.Spice = window.Spice || {};
       (notch
         ? `<path d="M${C},${C} V0 A${C},${C} 0 1 0 ${D},${C}Z" fill="none" stroke="#b5b5b5" stroke-width="0.12"/>`
         : `<circle cx="${C}" cy="${C}" r="${C}" fill="none" stroke="#b5b5b5" stroke-width="0.12"/>`) + '</svg>',
+  };
+
+  // ---- lid style 2: Ø30 mm full circle (no hole, no cut-out) ----
+  const D30 = 30, C30 = 15;
+  S.lid30 = {
+    D: D30, C: C30,
+    base: (fill) => `<circle cx="${C30}" cy="${C30}" r="${C30}" fill="${fill}"/>`,
+    ring: (r, attrs) => `<circle cx="${C30}" cy="${C30}" r="${r}" fill="none" ${attrs}/>`,
+    guide: () => `<svg class="guide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${D30} ${D30}" width="${D30}mm" height="${D30}mm">` +
+      `<circle cx="${C30}" cy="${C30}" r="${C30}" fill="none" stroke="#b5b5b5" stroke-width="0.12"/></svg>`,
+  };
+
+  // Text centred on a half-circle. lower (default): reads left to right along the bottom, letter tops toward
+  // the centre. upper: along the top, letter tops outward. `r` is the baseline radius. Each call gets a unique
+  // path id because many SVGs share one document.
+  let arcSeq = 0;
+  S.arcLen = (r, frac) => Math.PI * r * (frac || 0.82); // usable text length on a half-circle of radius r
+  S.arcText = (str, o) => {
+    const id = `arc-${++arcSeq}`;
+    const { cx, cy, r } = o;
+    const d = o.upper ? `M${cx - r},${cy} A${r},${r} 0 0 1 ${cx + r},${cy}` : `M${cx - r},${cy} A${r},${r} 0 0 0 ${cx + r},${cy}`;
+    return `<path id="${id}" fill="none" d="${d}"/>` +
+      `<text font-size="${o.size.toFixed(3)}" font-family="${o.family}" font-weight="${o.weight || 400}" font-style="${o.style || 'normal'}" ` +
+      `fill="${o.fill}" letter-spacing="${((o.ls || 0) * o.size).toFixed(3)}"><textPath href="#${id}" startOffset="50%" text-anchor="middle">${S.esc(str)}</textPath></text>`;
   };
 })(window.Spice);

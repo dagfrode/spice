@@ -10,7 +10,7 @@
     const { str, size } = S.fitName(item.name, { ...NAME, width: 44, max: 6 });
     const hasSub = !!item.sub;
     let g = `<rect width="${W}" height="${H}" fill="${PAPER}"/>`;
-    g += `<rect x="1.4" y="1.4" width="${W - 2.8}" height="${H - 2.8}" fill="none" stroke="${INK}" stroke-width="0.14"/>`;
+    g += `<rect x="0" y="0" width="${W}" height="${H}" fill="none" stroke="${INK}" stroke-width="0.28"/>`;
     g += `<path d="M27.6,8.4 h4.8" stroke="${INK}" stroke-width="0.3"/>`;
     g += S.text(str, { ...NAME, x: cx, y: (hasSub ? 15.2 : 16.6) + size * 0.35, size, fill: INK });
     if (hasSub) {
@@ -42,6 +42,24 @@
     return S.svg(L.D, L.D, g);
   }
 
+  // Ø30 mm full-circle lid: one dot, tracked name centred on the lower arc
+  function circle30(item) {
+    const l = S.lid30, c = l.C;
+    let g = l.base(PAPER);
+    g += l.ring(14.2, `stroke="${INK}" stroke-width="0.14"`);
+    g += `<circle cx="${c}" cy="${c - 5.6}" r="0.5" fill="${INK}"/>`;
+    const rb = 10.2, str = item.name.toUpperCase();
+    const nm = { ...NAME, ls: 0.2 };
+    const size = S.fit.size(str, { ...nm, width: S.arcLen(rb, 0.8), max: 3.6 });
+    g += S.arcText(str, { ...nm, cx: c, cy: c, r: rb, size, fill: INK });
+    if (item.sub) {
+      const sub = item.sub.toUpperCase();
+      const ss = S.fit.size(sub, { ...SUB, width: 13, max: 1.8 });
+      g += S.text(sub, { ...SUB, x: c, y: c + 2.4, size: ss, fill: SOFT });
+    }
+    return S.svg(l.D, l.D, g);
+  }
+
   function box(cat, items) {
     const W = 70, H = 70, cx = 35;
     let g = `<rect width="${W}" height="${H}" fill="${PAPER}"/>`;
@@ -57,6 +75,6 @@
   S.designs.register({
     id: 'skandinavisk', name: 'Skandinavisk',
     blurb: 'Quiet, airy, plain sans. One line, lots of space.',
-    rect, circle, box,
+    rect, circle, circle30, box,
   });
 })(window.Spice);

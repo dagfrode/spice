@@ -48,14 +48,14 @@
     Promise.all(S.fontSpecs.map((s) => document.fonts.load(s))).then(() => {
       const item = (name, sub, no) => ({ name, sub, origin: '', no, cat: 'Krydder' });
       const rects = [
-        { d: 'editorial', it: item('Paprika', 'søt', 14), x: 740, y: 52, w: 390, r: -3 },
-        { d: 'artdeco', it: item('Melange', 'the spice', 1), x: 770, y: 222, w: 390, r: 2 },
-        { d: 'apotek', it: item('Kanel', '', 22), x: 730, y: 392, w: 390, r: -2 },
+        { d: 'editorial', it: item('Paprika', 'søt', 201), x: 740, y: 52, w: 390, r: -3 },
+        { d: 'artdeco', it: item('Melange', 'the spice', 101), x: 770, y: 222, w: 390, r: 2 },
+        { d: 'apotek', it: item('Kanel', '', 406), x: 730, y: 392, w: 390, r: -2 },
       ];
       const lids = [
-        { d: 'editorial', it: item('Paprika', '', 14) },
-        { d: 'artdeco', it: item('Melange', 'spice', 1) },
-        { d: 'apotek', it: item('Kanel', 'malt', 22) },
+        { d: 'editorial', it: item('Paprika', '', 201) },
+        { d: 'artdeco', it: item('Melange', 'spice', 101) },
+        { d: 'apotek', it: item('Kanel', 'malt', 406) },
       ];
       let h = rects.map((r) =>
         `<div class="lbl" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;transform:rotate(${r.r}deg)">${S.designs.get(r.d).rect(r.it)}</div>`).join('');
